@@ -18,13 +18,14 @@ import com.google.gson.reflect.TypeToken;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.Alert;
 import models.MultipleChoiceQuestion;
 import models.PendingJoinRequest;
 import models.Question;
 import models.QuestionFactory;
 import models.StudyMaterial;
 
-public class AdminDAO {
+public class AdminDashboardDAO {
 	// Method to fetch pending join requests from the database
     public ObservableList<PendingJoinRequest> fetchPendingRequests() {
         ObservableList<PendingJoinRequest> pendingRequests = FXCollections.observableArrayList();
@@ -93,7 +94,7 @@ public class AdminDAO {
     public void declineRequest(PendingJoinRequest request) {
         String sql = "DELETE FROM PendingRegistrations WHERE email = ?";
 
-        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/quizzy", "root", "2004");
+        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3316/quizzy", "root", "12345");
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, request.getEmail());
             pstmt.executeUpdate();
@@ -184,9 +185,13 @@ public class AdminDAO {
             if (questionsDeleted > 0) {
                 conn.commit();
                 System.out.println("Question and related options deleted successfully.");
+            	showAlert("success", "Question and related options deleted successfully.");
+
             } else {
                 conn.rollback(); // Rollback if no questions were deleted
                 System.out.println("Question delete process failed. No question found with the given ID.");
+            	showAlert("Error", "Question delete process failed. No question found with the given ID.");
+
             }
 
         } catch (SQLException e) {
@@ -234,8 +239,12 @@ public class AdminDAO {
 
             if (rowsAffected > 0) {
                 System.out.println("Question updated successfully.");
+            	showAlert("success", "Question updated successfully.");
+
             } else {
                 System.out.println("Question update failed.");
+            	showAlert("Error", "Question update failed.");
+
             }
 
             // If the question is a Multiple Choice, update the options as well
@@ -286,8 +295,12 @@ public class AdminDAO {
             int rowsAffected = stmt.executeUpdate();
             if (rowsAffected > 0) {
                 System.out.println("Question options updated successfully.");
+            	showAlert("Success", "Question options updated successfully.");
+
             } else {
                 System.out.println("Question options update failed.");
+            	showAlert("Error", "Question options update failed.");
+
             }
 
         } catch (SQLException e) {
@@ -387,9 +400,12 @@ public class AdminDAO {
 
             if (rowsAffected > 0) {
                 System.out.println("Study material uploaded successfully.");
+
                 return true;
             } else {
                 System.out.println("Failed to upload study material.");
+            	showAlert("Error", "Failed to upload study material.");
+
                 return false;
             }
 
@@ -469,10 +485,14 @@ public class AdminDAO {
 
             int rowsAffected = stmt.executeUpdate();
             if (rowsAffected > 0) {
+            	
                 System.out.println("Study material deleted successfully.");
+
                 return true;
             } else {
                 System.out.println("No material found with the given ID.");
+            	showAlert("Error", "No material found with the given ID.");
+
                 return false;
             }
 
@@ -488,6 +508,13 @@ public class AdminDAO {
             }
         }
     }
+    private static void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
 
 
 
@@ -496,3 +523,6 @@ public class AdminDAO {
 
 
 }
+
+    
+

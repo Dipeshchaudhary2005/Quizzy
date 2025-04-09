@@ -1,15 +1,15 @@
 package services;
 
-import backend.AdminDAO;
+import backend.AdminDashboardDAO;
 import javafx.collections.ObservableList;
 import models.PendingJoinRequest;
 
 public class AdminDashboardService {
 
-    private AdminDAO adminDashboardDB;
+    private AdminDashboardDAO adminDashboardDB;
 
     public AdminDashboardService() {
-        this.adminDashboardDB = new AdminDAO();
+        this.adminDashboardDB = new AdminDashboardDAO();
     }
 
     // Method to approve the join request (move to Users table)
